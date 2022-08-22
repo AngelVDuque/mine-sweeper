@@ -21,9 +21,24 @@ public class MineSweeper extends javax.swing.JFrame {
         initComponents();
         
         setSize(520,500);
+        
+        reset_button = new JButton("Reset");
+        reset_button.setBounds(0, 0, 75, 50);
+        reset_button.setFocusPainted(false);
+        
+        reset_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetMatrix();
+            }
+        });
+                
+        getContentPane().add(reset_button);
+        
         initMatrix();
     }
     
+    private JButton reset_button;
     private JButton[][] button_matrix;
     private String[][] current_map;
     
@@ -47,6 +62,14 @@ public class MineSweeper extends javax.swing.JFrame {
             }
         }
         return coords;
+    }
+    
+    private void resetMatrix(){
+        for(int i = 0; i < 10; ++i){
+            for(int j = 0; j < 8; ++j){
+                button_matrix[i][j].setText("");
+            }
+        }
     }
     
     private void initMatrix(){
@@ -75,7 +98,6 @@ public class MineSweeper extends javax.swing.JFrame {
                         
                         // TODO: Aqui va lo tuyo alcor
                         jb.setText(current_map[coord[0]][coord[1]]);
-                        
                     }
                 });
                 
