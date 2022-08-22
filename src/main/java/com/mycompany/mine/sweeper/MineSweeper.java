@@ -4,6 +4,10 @@
  */
 package com.mycompany.mine.sweeper;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
 /**
  *
  * @author Famas
@@ -15,8 +19,73 @@ public class MineSweeper extends javax.swing.JFrame {
      */
     public MineSweeper() {
         initComponents();
+        
+        setSize(520,500);
+        initMatrix();
     }
-
+    
+    private JButton[][] button_matrix;
+    private String[][] current_map;
+    
+    // Si el string tiene el formato <numero><-><numero>
+    // Ejemplo: 18-34
+    // Devuelve en la posicion 0 : 18
+    // Devuelve en la posicion 1 : 34
+    // Separa por coordenada (x, y)
+    private int[] getCoord(String coord){
+        coord += "-";
+        
+        int k = 0;
+        int[] coords = new int[2];
+        String current_number = "";
+        for(int i = 0; i < coord.length(); ++i){
+            if(coord.charAt(i) == '-'){
+                coords[k++] = Integer.parseInt(current_number);
+                current_number = "";
+            } else {
+                current_number += coord.charAt(i);
+            }
+        }
+        return coords;
+    }
+    
+    private void initMatrix(){
+        button_matrix = new JButton[18][32];
+        current_map = new String[18][32];
+        
+        int x = 0;
+        int y = 0;
+        for(int i = 0; i < 10; ++i){
+            y = 55;
+            for(int j = 0; j < 8; ++j){
+                button_matrix[i][j] = new JButton("");
+                button_matrix[i][j].setBounds(x, y, 50, 50);
+                button_matrix[i][j].setFocusPainted(false);
+                button_matrix[i][j].setName(i + "-" + j);
+                
+                current_map[i][j] = String.valueOf(i + j);
+                    
+                button_matrix[i][j].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JButton jb = (JButton)e.getSource();
+                        int[] coord = getCoord(jb.getName());
+                        
+                        System.out.println(current_map[coord[0]][coord[1]]);
+                        
+                        // TODO: Aqui va lo tuyo alcor
+                        jb.setText(current_map[coord[0]][coord[1]]);
+                        
+                    }
+                });
+                
+                getContentPane().add(button_matrix[i][j]);
+                
+                y += 50;
+            }
+            x += 50;
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,17 +96,8 @@ public class MineSweeper extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setSize(new java.awt.Dimension(0, 0));
+        getContentPane().setLayout(null);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -77,7 +137,6 @@ public class MineSweeper extends javax.swing.JFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
