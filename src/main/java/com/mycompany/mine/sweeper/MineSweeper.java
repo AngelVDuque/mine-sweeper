@@ -32,14 +32,26 @@ public class MineSweeper extends javax.swing.JFrame {
     private JButton[][] button_matrix;
     private String[][] current_map;
     
-    // Alcor task
-    // Follow up: Me gustaria una funcion para crear botones 
+    // Alcor task 
+    // Dificultad del task: media
+    // Me gustaria una funcion para crear y modificar botones 
     // Para no repetir el mismo codigo una y otra vez.
     
     // Alcor task
+    // Dificultad del task: facil
     // Follow up: 
     // Cambiar el arreglo de sizes de local a global para ahorrar memoria y tiempo
     
+    // Alcor task
+    // Dificultad del task: dificil
+    // Agregar funcionalidad, si un jugador da click en una mina, 
+    // Mostrar todas las demas minas faltantes y un mensaje de que perdio.
+    
+    // Alcor task
+    // Dificultad del task: dificil
+    // Agregado de minas y proximidad
+    // Ya se ha platicado de esta task
+   
     private Color[] colors = { Color.black, 
         Color.blue, Color.green, Color.red, 
         new java.awt.Color(0,68,129), new java.awt.Color(139,0,0), new java.awt.Color(64,224,208),
@@ -54,6 +66,7 @@ public class MineSweeper extends javax.swing.JFrame {
         initComponents();
         setSize(520, 500);
         
+        // Init change button
         change_mode = new JButton("Facil");
         change_mode.setBounds(75, 0, 75, 50);
         change_mode.setFocusPainted(false);
@@ -68,6 +81,7 @@ public class MineSweeper extends javax.swing.JFrame {
             }
         });
         
+        // Init reset button
         reset_button = new JButton("Reset");
         reset_button.setBounds(0, 0, 75, 50);
         reset_button.setFocusPainted(false);
@@ -77,11 +91,9 @@ public class MineSweeper extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 ResetButtonMatrix();
             }
-        });
-                
-        getContentPane().add(reset_button);
-        getContentPane().add(change_mode);
+        });               
         
+        // Init button matrix
         button_matrix = new JButton[18][32];
         for(int i = 0; i < 14; ++i){
             for(int j = 0; j < 12; ++j){
@@ -89,6 +101,9 @@ public class MineSweeper extends javax.swing.JFrame {
                 button_matrix[i][j].setFont(new Font("Arial", Font.PLAIN, 20));
             }
         }
+        
+        getContentPane().add(reset_button);
+        getContentPane().add(change_mode);
         
         current_map = new String[18][32]; 
         
@@ -101,12 +116,6 @@ public class MineSweeper extends javax.swing.JFrame {
         EnableMap(number_mode);
     }
     
-    // Alichos task
-    // Si el string tiene el formato <numero><-><numero>
-    // Ejemplo: 18-34
-    // Devuelve en la posicion 0 : 18
-    // Devuelve en la posicion 1 : 34
-    // Separa por coordenada (x, y)
     private int[] getCoord(String coord){
         coord += "-";
         
@@ -124,12 +133,11 @@ public class MineSweeper extends javax.swing.JFrame {
         return coords;
     }
     
-    // Alichos task
     private void ResetButtonMatrix(){
         for(int i = 0; i < 14; ++i){
             for(int j = 0; j < 12; ++j){
                 button_matrix[i][j].setText("");
-                button_matrix[i][j].setBackground(new java.awt.Color(255,255,255));
+                button_matrix[i][j].setBackground(new java.awt.Color(47,79,79));
                 current_map[i][j] = "";
             }
         }
@@ -171,9 +179,10 @@ public class MineSweeper extends javax.swing.JFrame {
     // Tambien debe considerar la dificultad
     // Tanto para minas, como para tamano del mapa
     // Considerar cuando una mina de sobre lapa con otra
-    private void RandomizerTest(){        
-        // Completar esta funcion :) 
-        current_map[0][0] = "M"; 
+    // Las minas se deben poner con una "M" para que funcione todo lo demas
+    private void RandomizerTest(){  
+        // Acompletame :D
+        current_map[0][0] = "M";
     }
     
     // Alichos Task
@@ -181,6 +190,7 @@ public class MineSweeper extends javax.swing.JFrame {
         Queue<int[]> queue = new LinkedList<>();
         queue.add(coord);
         
+        int [] sizes = { 10, 8, 12, 10, 14, 12};
         int[][] dir = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
         
         while(!queue.isEmpty()){
@@ -192,17 +202,16 @@ public class MineSweeper extends javax.swing.JFrame {
                 int sx = x + dir[k][0];
                 int sy = y + dir[k][1];
                
-                if(sx < 0 || sy < 0 || sx == 14 || sy == 12 || current_map[sx][sy].equals("M")) continue;
+                if(sx < 0 || sy < 0 || sx == sizes[number_mode * 2] ||
+                        sy == sizes[number_mode * 2 + 1] || current_map[sx][sy].equals("M")) continue;
                         
-                if(current_map[sx][sy].equals("")){
-                    // Empty position
+                if(current_map[sx][sy].equals("")) {
                     int[] new_coord = {sx, sy};
                     if(button_matrix[sx][sy].getBackground() != Color.gray)
                         queue.add(new_coord);
                     
                     button_matrix[sx][sy].setBackground(Color.gray);
                 } else {
-                    // Proximity position
                     int[] num_coord = getCoord(button_matrix[sx][sy].getName());
                     
                     int num = 0;
@@ -228,12 +237,13 @@ public class MineSweeper extends javax.swing.JFrame {
                 button_matrix[i][j].setBounds(x, y, 50, 50);
                 button_matrix[i][j].setFocusPainted(false);
                 button_matrix[i][j].setName(i + "-" + j);
-                button_matrix[i][j].setBackground(new java.awt.Color(255,255,255));
+                button_matrix[i][j].setBackground(new java.awt.Color(47,79,79));
                 
-                    
                 button_matrix[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // Esta parte del codigo es interesante
+                        // podria ayudar en una task
                         JButton jb = (JButton)e.getSource();
                         int[] coord = getCoord(jb.getName());
                         
@@ -251,9 +261,7 @@ public class MineSweeper extends javax.swing.JFrame {
                         }
                     }
                 });
-                
                 getContentPane().add(button_matrix[i][j]);
-                
                 y += 50;
             }
             x += 50;
